@@ -58,20 +58,116 @@
     print_recently_visited();
     
     // List Issue Created during the last 2 weeks in CAMOS Support, ATR, ACP
+    ?>
+    <center><h2> Blocking / High Issues </h2></center>
+    <br>
+    <br>
+    <?php
+        
+        function getValueFromTxt($txt,$search){
+            $priorityTab = split(",",$txt);
+            
+            $i = sizeof($priorityTab)-1;
+            while($i >= 0){
+                $tmp = split(":",$priorityTab[$i]);
+                if($tmp[1] == $search){
+                    return $tmp[0];
+                }
+                $i--;
+            }
+            return null;
+        }
+        
+        function openTable(){
+            print "<center> \n <table> ";
+            print " <tr> <td> Id </td><td> Status </td><td> Category </td><td> Summary </td><td> Reporter </td><td> Assigned to </td><td> </tr>";
+        }
+        
+        function closeTable(){
+            print "</table> \n </center>  ";
+        }
+        
+        function displayResults($query){
+
+            $result = db_query_bound( $query );
+            while ( $row = db_fetch_array( $result )){
+                $t_bug = bug_get($row['id']);
+                print "<tr> ";
+                print "<td> ".get_artas_id($row['id'])." </td>";
+                print "<td> ".$t_bug->status." </td>";
+                print "<td> ".category_get_row($t_bug->category_id)['name']." </td>";
+                print "<td> ".$t_bug->summary." </td>";
+                print "<td> ".$t_bug->reporter_id." </td>";
+                print "<td> ".$t_bug->handler_id." </td>";
+                print "</tr>";
+            }
+            
+        }
+        
+        $PriorityHigh  = getValueFromTxt(config_get( 'priority_enum_string'),"High");
+        $SeverityBlocking = getValueFromTxt(config_get( 'severity_enum_string'),"Blocking");
+        $statusSubmitted = getValueFromTxt(config_get( 'status_enum_string'),"Submitted");
+        $statusResolved = config_get( 'bug_resolved_status_threshold', null, null, 3 );
+        
+        // Get Priority High values
+        
+        
+        $query = "SELECT    id ".
+                 "FROM      mantis_bug_table ".
+                 "where     priority = $PriorityHigh ".
+                 "and       severity = $SeverityBlocking ".
+                 "and       project_id = 3 ".
+                 "and       status < $statusResolved ".
+                 "Order by date_submitted asc;";
+        
+        //print $query;
+        openTable();
+        displayResults($query);
+        
+        $statusResolved = config_get( 'bug_resolved_status_threshold', null, null, 4 );
+        $query = "SELECT    id ".
+        "FROM      mantis_bug_table ".
+        "where     priority = $PriorityHigh ".
+        "and       severity = $SeverityBlocking ".
+        "and       project_id = 4 ".
+        "and       status < $statusResolved ".
+        "Order by date_submitted asc;";
+        
+        //print $query;
+        displayResults($query);
+        
+        closeTable();
+    ?>
+    <center><h2> Issues submitted 2 weeks ago </h2></center>
+    <br>
+    <br>
+
+    <?php
     $query = "SELECT    id, datediff(now(), from_unixtime(date_submitted)) as s1 ".
              "FROM      mantis_bug_table ".
+             "where     status = $statusSubmitted  ".
              "HAVING 	s1 < 70 ".
              "Order by date_submitted asc;";
     
-    $result = db_query_bound( $query );
-    while ( $row = db_fetch_array( $result )){
-        print $row['id']."<br>";
-    }
     
     
-    //
-        
+        openTable();
+        displayResults($query);
+        closeTable();
 
-        
-        ?>
+    ?>
+
+    <center><h2> Milestones per version </h2></center>
+    <br>
+    <br>
+
+
+    <center><h2> Issue Overdue </h2></center>
+    <br>
+    <br>
+
+<?php
+    
+
+?>
 
