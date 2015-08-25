@@ -94,11 +94,11 @@
                 $t_bug = bug_get($row['id']);
                 print "<tr> ";
                 print "<td> ".get_artas_id($row['id'])." </td>";
-                print "<td> ".$t_bug->status." </td>";
+                print "<td> ".string_display_line( get_enum_element( 'status', $t_bug->status) )." </td>";
                 print "<td> ".category_get_row($t_bug->category_id)['name']." </td>";
                 print "<td> ".$t_bug->summary." </td>";
-                print "<td> ".$t_bug->reporter_id." </td>";
-                print "<td> ".$t_bug->handler_id." </td>";
+                print "<td> ".user_get_field($t_bug->reporter_id, 'username')." </td>";
+                print "<td> ".user_get_field($t_bug->handler_id , 'username')." </td>";
                 print "</tr>";
             }
             
@@ -138,9 +138,7 @@
         
         closeTable();
     ?>
-    <center><h2> Issues submitted 2 weeks ago </h2></center>
-    <br>
-    <br>
+    <br><br><center><h2> Issues submitted 2 weeks ago </h2></center>
 
     <?php
     $query = "SELECT    id, datediff(now(), from_unixtime(date_submitted)) as s1 ".
@@ -157,14 +155,25 @@
 
     ?>
 
-    <center><h2> Milestones per version </h2></center>
+    <br><br><center><h2> Milestones per version </h2></center>
     <br>
     <br>
 
 
-    <center><h2> Issue Overdue </h2></center>
-    <br>
-    <br>
+    <br><br><center><h2> Issue Overdue </h2></center>
+
+    <?php
+        $query = "SELECT    id, datediff(now(), from_unixtime(due_date)) as s1 ".
+        "FROM      mantis_bug_table ".
+        "where     due_date > 0 ".
+        "HAVING    s1 < 5 ".
+        "Order by  s1 desc;";
+    
+        openTable();
+        displayResults($query);
+        closeTable();
+    
+    ?>
 
 <?php
     
