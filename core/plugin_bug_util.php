@@ -38,7 +38,59 @@
                         
                                    
     }
-                                   
+    
+    function getValueFromTxt($txt,$search){
+        $priorityTab = split(",",$txt);
+        
+        $i = sizeof($priorityTab)-1;
+        while($i >= 0){
+            $tmp = split(":",$priorityTab[$i]);
+            if($tmp[1] == $search){
+                return $tmp[0];
+            }
+            $i--;
+        }
+        return null;
+    }
+    
+    function openTable(){
+        print "<center> \n <table> ";
+        print " <tr> <td> Id </td><td> Status </td><td> Category </td><td> Summary </td><td> Reporter </td><td> Assigned to </td><td> </tr>";
+    }
+    
+    function closeTable(){
+        print "</table> \n </center>  ";
+    }
+    
+    function displayResultsCore($query,$fields{
+        $result = db_query_bound( $query );
+        while ( $row = db_fetch_array( $result )){
+            $t_bug = bug_get($row['id']);
+            print "<tr> ";
+            print "<td> ".get_artas_id($row['id'])." </td>";
+            print "<td> ".string_display_line( get_enum_element( 'status', $t_bug->status) )." </td>";
+            print "<td> ".category_get_row($t_bug->category_id)['name']." </td>";
+            print "<td> ".$t_bug->summary." </td>";
+            print "<td> ".user_get_field($t_bug->reporter_id, 'username')." </td>";
+            print "<td> ".user_get_field($t_bug->handler_id , 'username')." </td>";
+            if(sizeof($fields) > 0){
+                                for(int $i=0;$i<sizeof($fields);$i++){
+                print "<td> ".$row['s1']." </td>";
+                                }
+            }
+            print "</tr>";
+        }
+
+    }
+    
+    function displayResults($query){
+        displayResultsCore($query,0);
+        
+    }
+    
+    function displayResultsWithScore($query){
+        displayResultsCore($query,1);
+    }
 
 #
 ?>
