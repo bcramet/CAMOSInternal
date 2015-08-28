@@ -68,7 +68,7 @@
          $statusHolding = getValueFromTxt(config_get( 'status_enum_string'),"Holding");
         // Get Issues sorted by Priority + Severity
         
-        $query = "SELECT    id, (priority + severity) as s1 ".
+        $query = "SELECT    id, (priority + severity) as s1, from_unixtime(due_date) as duedate ".
                  "FROM      mantis_bug_table ".
                  "where     project_id IN (3, 4, 1, 9) ".
                  "and       status >= $statusOpened ".
@@ -77,8 +77,9 @@
                  "Order by s1 desc LIMIT 30;";
         
         //print $query;
+        $fields = array( "s1","duedate");
         openTable();
-        displayResultsWithScore($query);
+        displayResultsWithFields($query,$fields);
         
         closeTable();
     ?>

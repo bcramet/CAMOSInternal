@@ -106,7 +106,7 @@
     $query = "SELECT    id, datediff(now(), from_unixtime(date_submitted)) as s1 ".
              "FROM      mantis_bug_table ".
              "where     status = $statusSubmitted  ".
-             "HAVING 	s1 < 70 ".
+             "HAVING 	s1 < 20 ".
              "Order by date_submitted asc;";
     
     
@@ -125,14 +125,14 @@
     <br><br><center><h2> Issue Overdue </h2></center>
 
     <?php
-        $query = "SELECT    id, datediff(now(), from_unixtime(due_date)) as s1 ".
+        $query = "SELECT id, datediff( from_unixtime(due_date), now() ) as s1,from_unixtime(due_date) as duedate ".
         "FROM      mantis_bug_table ".
-        "where     due_date > 0 ".
-        "HAVING    s1 < 5 ".
+        "where     due_date > 1 ".
+        "HAVING    s1 < 0 ".
         "Order by  s1 desc;";
     
         openTable();
-        displayResults($query);
+        displayResultsWithFields($query,array ("duedate"));
         closeTable();
     
     ?>

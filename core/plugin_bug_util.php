@@ -54,42 +54,44 @@
     }
     
     function openTable(){
-        print "<center> \n <table> ";
-        print " <tr> <td> Id </td><td> Status </td><td> Category </td><td> Summary </td><td> Reporter </td><td> Assigned to </td><td> </tr>";
+        print "<center> \n <table> \n";
+        print " <tr> <td> Id </td><td> Status </td><td> Category </td><td> Summary </td><td> Reporter </td><td> Assigned to </td><td> </tr> \n";
     }
     
     function closeTable(){
-        print "</table> \n </center>  ";
+        print "</table> \n </center>  \n";
     }
     
-    function displayResultsCore($query,$fields{
+    function displayResultsCore($query,$fields){
         $result = db_query_bound( $query );
         while ( $row = db_fetch_array( $result )){
             $t_bug = bug_get($row['id']);
-            print "<tr> ";
-            print "<td> ".get_artas_id($row['id'])." </td>";
-            print "<td> ".string_display_line( get_enum_element( 'status', $t_bug->status) )." </td>";
-            print "<td> ".category_get_row($t_bug->category_id)['name']." </td>";
-            print "<td> ".$t_bug->summary." </td>";
-            print "<td> ".user_get_field($t_bug->reporter_id, 'username')." </td>";
-            print "<td> ".user_get_field($t_bug->handler_id , 'username')." </td>";
+            print "<tr> \n";
+            print "<td> ".get_artas_id($row['id'])." </td>\n";
+            print "<td> ".string_display_line( get_enum_element( 'status', $t_bug->status) )." </td>\n";
+            print "<td> ".category_get_row($t_bug->category_id)['name']." </td>\n";
+            print "<td> ".$t_bug->summary." </td>\n";
+            print "<td> ".user_get_field($t_bug->reporter_id, 'username')." </td>\n";
+            if($t_bug->handler_id != null){
+               print "<td> ".user_get_field($t_bug->handler_id , 'username')." </td>\n"; 
+            }
             if(sizeof($fields) > 0){
-                                for(int $i=0;$i<sizeof($fields);$i++){
-                print "<td> ".$row['s1']." </td>";
+                for($i=0;$i<sizeof($fields);$i++){
+                print "<td> ".$row[$fields[$i]]." </td>\n";
                                 }
             }
-            print "</tr>";
+            print "</tr>\n";
         }
 
     }
     
     function displayResults($query){
-        displayResultsCore($query,0);
+        displayResultsCore($query,null);
         
     }
     
-    function displayResultsWithScore($query){
-        displayResultsCore($query,1);
+    function displayResultsWithFields($query,$fields){
+        displayResultsCore($query,$fields);
     }
 
 #
