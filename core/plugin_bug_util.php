@@ -53,9 +53,15 @@
         return null;
     }
     
-    function openTable(){
+    function openTable($fields = null){
         print "<center> \n <table> \n";
-        print " <tr> <td> Id </td><td> Status </td><td> Category </td><td> Summary </td><td> Reporter </td><td> Assigned to </td><td> </tr> \n";
+        print " <tr> <td> Id </td><td> Status </td><td> Category </td><td> Summary </td><td> Reporter </td><td> Assigned to </td>\n";
+        if(sizeof($fields) > 0){
+            for($i=0;$i<sizeof($fields);$i++){
+                print "<td> ".$fields[$i]." </td>\n";
+            }
+        }
+            print "</tr> \n";
     }
     
     function closeTable(){
@@ -64,7 +70,9 @@
     
     function displayResultsCore($query,$fields){
         $result = db_query_bound( $query );
+        $nbRows = 0;
         while ( $row = db_fetch_array( $result )){
+            $nbRows++;
             $t_bug = bug_get($row['id']);
             print "<tr> \n";
             print '<td><a href="' . string_get_bug_view_url( $row['id'] ) . '">' . bug_format_id( $row['id'] ) . '</a></td>';
@@ -84,16 +92,17 @@
             }
             print "</tr>\n";
         }
+        return $nbRows;
 
     }
     
     function displayResults($query){
-        displayResultsCore($query,null);
+        return displayResultsCore($query,null);
         
     }
     
     function displayResultsWithFields($query,$fields){
-        displayResultsCore($query,$fields);
+        return displayResultsCore($query,$fields);
     }
 
 #

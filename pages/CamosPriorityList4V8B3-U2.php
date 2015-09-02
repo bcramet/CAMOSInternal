@@ -71,39 +71,42 @@
    
     // Get Issues sorted by Priority + Severity
     
-    //ATR, ACP, ATS
-    
-    
+    // ATR, ACP, ATS
         
-        $query = "SELECT    id,  (priority + severity) as s1, from_unixtime(due_date) as duedate ".
+        $query = "SELECT    id,  (priority + severity) as AggregatedPriority, from_unixtime(due_date) as duedate ".
         "FROM      mantis_bug_table, mantis_bug_tag_table ".
         "where     project_id IN (3, 4, 1) ".
         "and       mantis_bug_table.id =  mantis_bug_tag_table.bug_id ".
         "and       tag_id = 68 ".
-        "ORDER by s1 desc        ";
-        
-        //print $query;
-        $fields = array( "duedate", "s1");
-        openTable();
-        displayResultsWithFields($query,$fields);
+        "and       status < ".$statusResolved." ".
+        "ORDER by AggregatedPriority desc";
+    
+        $fields = array( "AggregatedPriority");
+        openTable($fields);
+        $nbRows = displayResultsWithFields($query,$fields);
         closeTable();
-        
 ?>
+<center><h3><?php print $nbRows; ?> items</h3></center>
+        
+
 <br>
 <center><h1> Actions due before V8B3-U2 Release <i></i></h1></center>
 <br>
 <?php
-    $query = "SELECT    mantis_bug_table.id as id, from_unixtime(date_order) as dateorder, due_date, from_unixtime(due_date) as duedate ".
+    $query = "SELECT    mantis_bug_table.id as id, from_unixtime(date_order) as dateRelease, due_date, from_unixtime(due_date) as duedate ".
              "FROM      mantis_bug_table, mantis_project_version_table ".
              "where 	mantis_bug_table.project_id = 9 ".
              "and 	    due_date < date_order ".
              "and 	    due_date > 1 ".
              "and 	    mantis_project_version_table.id = 207 ".
+             "and       status < ".$statusResolved." ";
              "ORDER by duedate asc";
     
     //print $query;
-    $fields = array( "duedate", "dateorder");
-    openTable();
-    displayResultsWithFields($query,$fields);
+    $fields = array( "duedate", "dateRelease");
+    openTable($fields);
+    $nbRows = displayResultsWithFields($query,$fields);
     closeTable();
 ?>
+<center><h3><?php print $nbRows; ?> items</h3></center>
+<?php html_page_bottom1a(); ?>
