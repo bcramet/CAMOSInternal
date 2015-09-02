@@ -60,87 +60,50 @@
     // List Issue Created during the last 2 weeks in CAMOS Support, ATR, ACP
     ?>
 <br>
-<center><h1> Priority List</h1></center>
+<center><h1> Priority List V8B3-U2</h1></center>
 <br>
 <?php
     $statusResolved = config_get( 'bug_resolved_status_threshold', null, null, 3 );
     $statusOpened = getValueFromTxt(config_get( 'status_enum_string'),"Opened");
     $statusHolding = getValueFromTxt(config_get( 'status_enum_string'),"Holding");
+    
+    $tag_id = 68;
+   
     // Get Issues sorted by Priority + Severity
     
-    //IN (3, 4, 1, 9)
+    //ATR, ACP, ATS
     
-    ?><center><h2> ATR Priority List</h2></center> <br><?php
+    
         
-        $query = "SELECT    id, (priority + severity) as s1, from_unixtime(due_date) as duedate ".
-        "FROM      mantis_bug_table ".
-        "where     project_id = 3 ".
-        "and       status >= $statusOpened ".
-        "and       status <> $statusHolding ".
-        "and       status < $statusResolved ".
-        "Order by s1 desc LIMIT 20;";
+        $query = "SELECT    id,  (priority + severity) as s1, from_unixtime(due_date) as duedate ".
+        "FROM      mantis_bug_table, mantis_bug_tag_table ".
+        "where     project_id IN (3, 4, 1) ".
+        "and       mantis_bug_table.id =  mantis_bug_tag_table.bug_id ".
+        "and       tag_id = 68 ".
+        "ORDER by s1 desc        ";
         
         //print $query;
-        $fields = array( "s1","duedate");
+        $fields = array( "duedate", "s1");
         openTable();
         displayResultsWithFields($query,$fields);
-        
         closeTable();
         
-        ?><center><h2> ACP Priority List</h2></center> <br>
+?>
+<br>
+<center><h1> Actions due before V8B3-U2 Release <i></i></h1></center>
+<br>
 <?php
-    
-    $query = "SELECT    id, (priority + severity) as s1, from_unixtime(due_date) as duedate ".
-    "FROM      mantis_bug_table ".
-    "where     project_id = 4 ".
-    "and       status >= $statusOpened ".
-    "and       status <> $statusHolding ".
-    "and       status < $statusResolved ".
-    "Order by s1 desc LIMIT 20;";
+    $query = "SELECT    mantis_bug_table.id as id, from_unixtime(date_order) as dateorder, due_date, from_unixtime(due_date) as duedate ".
+             "FROM      mantis_bug_table, mantis_project_version_table ".
+             "where 	mantis_bug_table.project_id = 9 ".
+             "and 	    due_date < date_order ".
+             "and 	    due_date > 1 ".
+             "and 	    mantis_project_version_table.id = 207 ".
+             "ORDER by duedate asc";
     
     //print $query;
-    $fields = array( "s1","duedate");
+    $fields = array( "duedate", "dateorder");
     openTable();
     displayResultsWithFields($query,$fields);
-    
     closeTable();
-    
-    ?><center><h2> ATS Priority List</h2></center> <br>
-<?php
-    
-    $query = "SELECT    id, (priority + severity) as s1, from_unixtime(due_date) as duedate ".
-    "FROM      mantis_bug_table ".
-    "where     project_id = 1 ".
-    "and       status >= $statusOpened ".
-    "and       status <> $statusHolding ".
-    "and       status < $statusResolved ".
-    "Order by s1 desc LIMIT 20;";
-    
-    //print $query;
-    $fields = array( "s1","duedate");
-    openTable();
-    displayResultsWithFields($query,$fields);
-    
-    closeTable();
-    
-    ?><center><h2> CAMOS Actions Priority List</h2></center> <br>
-<?php
-    
-    $query = "SELECT    id, (priority + severity) as s1, from_unixtime(due_date) as duedate ".
-    "FROM      mantis_bug_table ".
-    "where     project_id = 9 ".
-    "and       status >= $statusOpened ".
-    "and       status <> $statusHolding ".
-    "and       status < $statusResolved ".
-    "Order by s1 desc LIMIT 10;";
-    
-    //print $query;
-    $fields = array( "s1","duedate");
-    openTable();
-    displayResultsWithFields($query,$fields);
-    
-    closeTable();
-    
-    
-    ?>
-
+?>

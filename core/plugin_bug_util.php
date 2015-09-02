@@ -67,7 +67,9 @@
         while ( $row = db_fetch_array( $result )){
             $t_bug = bug_get($row['id']);
             print "<tr> \n";
-            print "<td> ".get_artas_id($row['id'])." </td>\n";
+            print '<td><a href="' . string_get_bug_view_url( $row['id'] ) . '">' . bug_format_id( $row['id'] ) . '</a></td>';
+            
+            //print "<td> ".string_get_bug_view_url( ))." </td>\n";
             print "<td> ".string_display_line( get_enum_element( 'status', $t_bug->status) )." </td>\n";
             print "<td> ".category_get_row($t_bug->category_id)['name']." </td>\n";
             print "<td> ".$t_bug->summary." </td>\n";
