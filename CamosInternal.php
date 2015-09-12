@@ -3,7 +3,7 @@
         function register() {
             $this->name = 'Camos Internal';    # Proper name of plugin
             $this->description = 'Dashboard aimning at piloting the maintenance';    # Short description of the plugin
-            $this->page = 'InternalCamos.php';           # Default plugin page
+            $this->page = 'CamosInternalMeeting.php';           # Default plugin page
             
             $this->version = '1.0';     # Plugin version string
             $this->requires = array(    # Plugin dependencies, array of basename => version pairs
